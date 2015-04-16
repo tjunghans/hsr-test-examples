@@ -1,0 +1,13 @@
+{
+  "name": "fe-test-cases",
+  "version": "0.0.0",
+  "description": "Example test cases",
+  "licence":"MIT",
+  "scripts": {
+  "start": "node server.js"
+  },
+  "private": true,
+  "devDependencies" : {
+    "express": "^4.12"
+  }
+}

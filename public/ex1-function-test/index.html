@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Example 1: Function Test</title>
+  <link rel="stylesheet" href="/global/mocha.css">
+  <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+
+  <h1>Example 1: Function Test</h1>
+  <div id="mocha"></div>
+
+  <script src="/global/mocha.js"></script>
+  <script src="/global/chai.js"></script>
+  <script src="/global/sinon-1.14.1.js"></script>
+
+  <script>
+    function add(a, b) {
+      return Number(a) + Number(b);
+    }
+
+    function isPalindrome(word) {
+      if (!word) {
+        return false;
+      }
+
+      var len = word.trim().length;
+
+      if (len === 1) {
+        return true;
+      }
+      if (word[0].toLowerCase() === word[len - 1].toLowerCase()) {
+        if (len === 2) {
+          return true;
+        }     
+        return isPalindrome(word.substr(1, len - 2));
+      }
+      return false
+    }
+
+    mocha.setup('bdd');
+    var assert = chai.assert;
+
+    describe('Math', function () {
+      it('adds a and b together', function () {
+        assert.equal(add(1, 2), 3);
+        assert.equal(add('1', '2'), 3);
+      });
+    });
+
+    describe('Palindrome', function () {
+      it('returns true if word is a palindrome', function () {
+        assert.equal(isPalindrome(''), false);
+        assert.equal(isPalindrome(undefined), false);
+        assert(isPalindrome('a'));
+        assert(isPalindrome('bB '));
+        assert(isPalindrome('Eve'));
+        assert(isPalindrome('ABBA'));
+        assert.equal(isPalindrome('foo'), false);
+      });
+    });
+
+    mocha.run();
+  </script>
+
+</body>
+</html>

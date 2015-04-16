@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Example 2: Async Test</title>
+  <link rel="stylesheet" href="/global/mocha.css">
+  <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <h1>Example 2: Async Test</h1>
+  <div id="mocha"></div>
+
+  <script src="/global/mocha.js"></script>
+  <script src="/global/chai.js"></script>
+  <script src="/global/sinon-1.14.1.js"></script>
+
+  <script id="source">
+    // Source
+    function async(callback) {
+      setTimeout(callback, 500);
+    }
+
+    function delayedAlert(message, delay) {
+      function alertMessage() {
+        alert(message);
+      }
+      setTimeout(alertMessage, delay);
+    }
+  </script>
+
+  <script id="test">
+    // Test
+    mocha.setup('bdd');
+    var assert = chai.assert;
+
+    describe('async tests', function () {
+      it('executes callback', function (done) {
+        async(function () {
+          done();
+        });
+      });
+
+      it('executes callback (with sinon clock)', function () {
+        // prepare
+        var clock = sinon.useFakeTimers(); // See http://sinonjs.org/docs/#clock
+        var spy = sinon.spy();
+
+        // execute
+        async(spy);
+        clock.tick(500);
+
+        // assert
+        sinon.assert.calledOnce(spy);
+
+        // clean up
+        clock.restore();
+      });
+
+      it('executes callback (with sinon sandbox)', sinon.test(function () {
+        // See http://sinonjs.org/docs/#sandbox
+        // prepare (setup)
+        var spy = this.spy();
+
+        // execute
+        async(spy);
+        this.clock.tick(500);
+
+        // assert
+        sinon.assert.calledOnce(spy);
+      }));
+    });
+
+    describe('delayed alert', function () {
+      var clock;
+
+      beforeEach(function () {
+        clock = sinon.useFakeTimers();
+      });
+
+      afterEach(function () {
+        clock.restore();
+      });
+
+      it('alerts after set delay', sinon.test(function () {
+        this.stub(window, 'alert');
+        delayedAlert('Hello World', 300);
+        this.clock.tick(300);
+
+        sinon.assert.calledOnce(window.alert);
+        sinon.assert.calledWith(window.alert, 'Hello World');
+      }));
+    });
+
+    mocha.run();
+  </script>
+</body>
+</html>
